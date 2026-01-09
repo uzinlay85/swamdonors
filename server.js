@@ -31,6 +31,7 @@ if (!SECRET_KEY || !ADMIN_PASSWORD || !TURSO_URL || !TURSO_TOKEN) {
 const client = createClient({
     url: TURSO_URL,
     authToken: TURSO_TOKEN,
+    tls: true,
 });
 
 (async () => {
@@ -151,5 +152,6 @@ app.post('/api/import', authenticateToken, async (req, res) => {
     try { await client.batch(transaction, "write"); res.json({ message: "Success" }); } 
     catch (e) { res.status(500).json({ error: "Import failed" }); }
 });
+
 
 app.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
