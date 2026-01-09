@@ -1,0 +1,91 @@
+    1  exit
+    2  clear
+    3  apt update -y
+    4  adduser kozin
+    5  usermod -aG sudo kozin
+    6  su kozin
+    7  mkdir -p ~/.ssh
+    8  chmod 700 ~/.ssh
+    9  touch ~/.ssh/authorized_keys
+   10  chmod 644 ~/.ssh/authorized_keys
+   11  nano ~/.ssh/authorized_keys
+   12  sudo systemctl restart sshd
+   13  sudo systemctl restart ssh
+   14  sudo systemctl enable ssh
+   15  exit
+   16  docker ps -a
+   17  ufw status
+   18  ufw allow 46215
+   19  ufw status
+   20  x-ui
+   21  docker ps -a
+   22  clear
+   23  docker ps -a
+   24  ufw allow 36591
+   25  docker ps -a
+   26  sudo systemctl stop fail2ban
+   27  sudo systemctl disable fail2ban
+   28  docker ps -a
+   29  ufw status
+   30  ufw allow 36591/udp
+   31  ufw status
+   32  sudo fail2ban-client status sshd
+   33  sudo iptables -L -n -v
+   34  sudo fail2ban-client status sshd
+   35  sudo iptables -L INPUT -n | grep f2b
+   36  sudo nano /etc/fail2ban/jail.local
+   37  sudo systemctl restart fail2ban
+   38  sudo iptables -L INPUT -n | grep f2b
+   39  sudo nano /etc/fail2ban/jail.local
+   40  sudo systemctl restart fail2ban
+   41  sudo iptables -L INPUT -n | grep f2b
+   42  sudo systemctl status fail2ban
+   43  sudo fail2ban-client status
+   44  sudo fail2ban-client status sshd
+   45  sudo ufw status verbose
+   46  sudo ufw logging low
+   47  sudo less /var/log/ufw.log
+   48  sudo tail -f /var/log/ufw.log
+   49  sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-apps/master/server_manager/install_scripts/install_server.sh)"
+   50  sudo ufw allow 33203/tcp    # Management port TCP
+   51  sudo ufw allow 1327/tcp     # Access key TCP
+   52  sudo ufw allow 1327/udp     # Access key UDP
+   53  sudo ufw reload             # ပြောင်းလဲမှု သက်ရောက်အောင် လုပ်ပါ
+   54  sudo ufw status
+   55  ls
+   56  cd donor-app/
+   57  ls
+   58  pm2 status
+   59  sudo apt-get remove -y nodejs npm
+   60  sudo apt-get purge -y nodejs npm
+   61  sudo apt-get autoremove -y
+   62  node -v
+   63  sudo kill -9 2630808
+   64  sudo rm /var/lib/apt/lists/lock
+   65  sudo rm /var/cache/apt/archives/lock
+   66  sudo rm /var/lib/dpkg/lock*
+   67  sudo dpkg --configure -a
+   68  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+   69  sudo apt-get install -y nodejs
+   70  node -v
+   71  sudo npm install -g pm2
+   72  cd /home/kozin/donor-app
+   73  rm -rf node_modules
+   74  npm install
+   75  pm2 start server.js --name "donor-app"
+   76  pm2 save
+   77  pm2 startup
+   78  curl http://localhost:3000
+   79  pm2 logs donor-app --lines 20
+   80  cd /home/kozin/donor-app
+   81  npm install dotenv
+   82  pm2 restart donor-app
+   83  pm2 status
+   84  curl http://localhost:3000
+   85  ls
+   86  nano .env
+   87  pm2 restart donor-app
+   88  ls
+   89  cd public/
+   90  crontab -e
+   91  history > command_log.txt

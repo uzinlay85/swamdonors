@@ -1,0 +1,2 @@
+npm uninstall sqlite3
+npm install @libsql/client dotenv express cors body-parser jsonwebtoken compression helmet express-rate-limit

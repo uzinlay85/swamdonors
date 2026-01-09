@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ပါဠိတက္ကသိုလ်ညောင်တုန်းကျောင်းတိုက် - ဆွမ်းအလှူရှင်စာရင်း</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
+        
+        :root {
+            --primary-color: #6a5acd;
+            --secondary-color: #8a7dcf;
+            --light-gray: #f8f9fa;
+            --dark-gray: #2d3748;
+            --morning-color: #d4a15b;
+            --day-color: #4caf50;
+            --danger-color: #e53e3e;
+            --success-color: #28a745;
+            --highlight-bg: #fff3cd; 
+            --highlight-border: #ffc107;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Pyidaungsu', sans-serif;
+            background: linear-gradient(to bottom right, var(--primary-color), var(--secondary-color));
+            color: #333;
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; margin: 0; padding: 10px;
+        }
+
+        input, button, select, textarea, .donor-entry { font-family: 'Pyidaungsu', sans-serif; }
+
+        .container {
+            background-color: #fff; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            width: 100%; max-width: 900px; padding: 24px; position: relative;
+        }
+
+        /* Header & Brand */
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { font-size: 22px; margin-bottom: 8px; display: flex; justify-content: center; align-items: center; gap: 15px; line-height: 1.4; }
+        header p { font-size: 14px; color: #666; margin-top: 5px; }
+        .logo-img { height: 50px; width: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--light-gray); }
+
+        .notice-box {
+            background-color: #fff5f5; border: 1px solid #fc8181; color: #c53030;
+            padding: 10px 15px; border-radius: 8px; margin-top: 15px; font-size: 13px; font-weight: bold;
+            text-align: center; line-height: 1.5; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(252, 129, 129, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(252, 129, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(252, 129, 129, 0); } }
+
+        .summary-counts {
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            background-color: var(--light-gray); padding: 12px; border-radius: 8px; margin-bottom: 20px;
+            border-left: 5px solid var(--primary-color);
+        }
+        .summary-counts div { font-size: 13px; font-weight: 700; color: var(--dark-gray); padding: 4px; }
+        #new-donors-today { cursor: pointer; color: var(--primary-color); }
+
+        /* Upcoming */
+        .upcoming-section { display: flex; gap: 15px; margin-bottom: 25px; }
+        .upcoming-card {
+            flex: 1; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--primary-color);
+            transition: transform 0.2s;
+        }
+        .upcoming-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .upcoming-card h3 { margin: 0 0 10px 0; font-size: 16px; color: var(--dark-gray); border-bottom: 1px dashed #eee; padding-bottom: 5px; }
+        .upcoming-row { display: flex; flex-direction: column; gap: 8px; font-size: 13px; margin-top: 8px; }
+        .upcoming-item { display: flex; justify-content: space-between; align-items: flex-start; background: #f8f9fa; padding: 8px 10px; border-radius: 6px; }
+        .upcoming-label { font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 6px; min-width: 70px; flex-shrink: 0; }
+        .upcoming-name-list { flex: 1; display: flex; flex-direction: column; gap: 5px; text-align: right; }
+        .upcoming-donor-block { border-bottom: 1px dashed #ddd; padding-bottom: 4px; margin-bottom: 2px; }
+        .upcoming-donor-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .upcoming-name { color: #333; font-weight: 600; font-size: 13px; word-break: break-word; line-height: 1.4; display: block; }
+        .upcoming-resp { font-size: 11px; color: #555; display: block; margin-top: 2px; }
+        .badge-morning { color: var(--morning-color); } .badge-day { color: var(--day-color); }
+        .no-data { color: #aaa; font-style: italic; font-weight: normal; font-size: 12px;}
+
+        /* Donor Cards */
+        .donors-section h2 { font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .donor-cards { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+        .donor-card {
+            background-color: var(--light-gray); border-radius: 12px; padding: 12px; flex: 1 1 150px;
+            display: flex; align-items: center; gap: 10px; cursor: pointer; border: 1px solid transparent; transition: transform 0.2s;
+        }
+        .donor-card:hover { transform: translateY(-2px); background: #fff; box-shadow: var(--shadow); }
+        .donor-card .icon { font-size: 20px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: #fff; }
+        .donor-card .icon.coffee { color: var(--morning-color); } .donor-card .icon.utensils { color: var(--day-color); }
+        .donor-card-info h3 { margin: 0; font-size: 15px; } .donor-card-info p { margin: 0; font-size: 13px; color: #555; }
+        .no-donations { color: #777; font-style: italic; text-align: center; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px dashed #ccc; font-size: 13px; }
+
+        /* Calendar */
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 5px; }
+        .month-label-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; }
+        .calendar-header h2 { font-size: 18px; margin: 0; color: var(--primary-color); font-weight: 700; cursor: pointer; text-align: center; line-height: 1.3; }
+        .calendar-header .mm-month-header { font-size: 15px; color: #444; font-weight: bold; }
+        .nav-btn {
+            background: var(--primary-color); color: white; border: none; border-radius: 12px;
+            width: auto; min-width: 60px; height: 40px; cursor: pointer; font-size: 20px;
+            display: flex; justify-content: center; align-items: center; padding: 0 15px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15); transition: all 0.2s ease;
+        }
+        .nav-btn:hover { background-color: var(--secondary-color); transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.2); }
+        .today-btn { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; background: var(--dark-gray); color: white; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: background-color 0.2s; }
+        .today-btn:hover { background-color: #000; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background-color: #e0e0e0; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+        .calendar-cell { background-color: #fff; padding: 4px; text-align: center; min-height: 100px; font-size: 14px; position: relative; display: flex; flex-direction: column; }
+        .day-header { font-weight: 700; padding: 8px 2px; background-color: #f1f3f5; min-height: auto; font-size: 14px; color: var(--dark-gray); }
+        .other-month { background-color: #fafafa; color: #ccc; }
+        .day-number { font-weight: 800; font-size: 17px; align-self: flex-end; margin-right: 4px; line-height: 1; color: #000; margin-bottom: 2px; }
+        .today { background-color: #f0f4ff !important; box-shadow: inset 0 0 0 2px var(--primary-color); position: relative; z-index: 1; }
+        .today .day-number { background-color: var(--primary-color); color: #fff; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; justify-content: center; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .mm-date { font-size: 11px; color: #2c3e50; margin-bottom: 4px; align-self: flex-start; margin-left: 2px; font-weight: 700; line-height: 1.2; text-align: left; }
+        .date-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; padding: 2px 0; }
+        .mm-date.full-moon { color: #d35400; font-weight: bold; background: #fff3cd; padding: 3px 4px; border-radius: 4px; font-size: 9px; white-space: normal; text-align: center; align-self: stretch; margin: 0; border: 1px solid #ffeeba; }
+        .mm-date.new-moon { color: #ffff00; background: #000000; padding: 3px 4px; border-radius: 4px; font-size: 9px; font-weight: bold; white-space: normal; text-align: center; align-self: stretch; margin: 0; border: 1px solid #333; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .mm-date.sabbath { color: var(--primary-color); font-weight: bold; }
+        
+        .donations-container { margin-top: auto; display: flex; flex-direction: column; gap: 2px; width: 100%; flex-grow: 1; justify-content: flex-end; }
+        .donor-entry { font-size: 10px; color: #fff; padding: 3px 2px; border-radius: 3px; text-align: left; cursor: pointer; width: 100%; line-height: 1.3; margin-top: 1px; }
+        .donor-morning { background-color: var(--morning-color); } .donor-day { background-color: var(--day-color); }
+        
+        /* Mobile List */
+        .mobile-list-view { display: none; margin-top: 10px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+        .mobile-list-row { display: flex; border-bottom: 1px solid #eee; background: #fff; min-height: 60px; }
+        .mobile-list-row:last-child { border-bottom: none; }
+        .mobile-list-row.today-row { background-color: var(--highlight-bg) !important; border: 2px solid var(--highlight-border) !important; box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3); z-index: 5; position: relative; }
+        .col-eng-date { width: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #f0f0f0; background: #fafafa; line-height: 1; padding: 5px; }
+        .mobile-list-row.today-row .col-eng-date { background-color: var(--highlight-border); color: #000; border-right: 1px solid #d4a15b; }
+        .col-eng-date .date-val { font-size: 20px; font-weight: 900; color: #000; }
+        .col-eng-date .day-val { font-size: 11px; font-weight: 700; color: var(--primary-color); text-transform: uppercase; margin-top: 4px; }
+        .mobile-list-row.today-row .col-eng-date .day-val { color: #333; }
+        .col-mm-date { width: 75px; padding: 8px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; color: #333; font-weight: 600; border-right: 1px solid #f0f0f0; line-height: 1.3; }
+        .col-donors { flex: 1; padding: 8px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+        .mobile-donor-item { padding: 8px; border-radius: 6px; font-size: 12px; border-left: 3px solid transparent; background: #f9f9f9; cursor: pointer; margin-bottom: 3px; }
+        .mobile-donor-item.morning { border-left-color: var(--morning-color); background: #fffbf2; }
+        .mobile-donor-item.day { border-left-color: var(--day-color); background: #f0fff4; }
+        .mobile-donor-empty { color: #ccc; font-style: italic; font-size: 11px; padding: 4px; }
+
+        /* Footer & Utils */
+        .footer { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; border-top: 2px dashed #e0e0e0; padding-top: 15px; margin-top: 20px; gap: 10px; }
+        .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%; }
+        .admin-btn, .action-btn { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; color: white; background: var(--dark-gray); display: inline-flex; align-items: center; gap: 6px; }
+        .action-btn.secondary { background: #e2e8f0; color: #333; }
+        .admin-only, #import-file-input { display: none; }
+        #user-status { width: 100%; text-align: center; margin-bottom: 5px; font-size: 11px; color: #666; }
+
+        /* Modals */
+        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
+        .modal-backdrop.show { display: flex; animation: fadeIn 0.2s; }
+        .modal-content { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .modal-content h3 { margin-top: 0; color: var(--primary-color); font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 13px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+        .modal-actions button { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: bold; }
+        #save-donor-btn { background-color: var(--success-color); color: #fff; }
+        #delete-donor-btn { background-color: var(--danger-color); color: #fff; display: none; }
+        .cancel-btn { background-color: #e2e8f0; color: #4a5568; }
+        
+        /* Tables */
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .results-table th, .results-table td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; font-size: 12px; }
+        .results-table th { background: #f8f9fa; font-weight: bold; }
+
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 3000; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { width: 30px; height: 30px; border: 3px solid #eee; border-top: 3px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 300px; }
+        .toast { background: #333; color: white; padding: 10px 15px; border-radius: 4px; font-size: 13px; text-align: center; opacity: 0; transition: opacity 0.3s; display: none; }
+        .toast.show { display: block; opacity: 1; }
+        .toast.success { background: var(--success-color); }
+        .toast.error { background: var(--danger-color); }
+
+        @media (max-width: 600px) {
+            body { padding: 0; align-items: flex-start; background: #fff; }
+            .container { padding: 10px; border-radius: 0; box-shadow: none; margin-bottom: 60px; }
+            header h1 { flex-direction: column; gap: 8px; font-size: 18px; }
+            .logo-img { width: 45px; height: 45px; }
+            .summary-counts { flex-direction: column; }
+            .upcoming-section { flex-direction: column; gap: 10px; }
+            .upcoming-card { padding: 10px; display: flex; align-items: center; justify-content: space-between; border-top: none; border-left: 4px solid var(--primary-color); }
+            .upcoming-card h3 { border-bottom: none; padding-bottom: 0; margin: 0; font-size: 14px; width: 70px; text-align: left; line-height: 1.3; }
+            .upcoming-row { flex-direction: column; flex-grow: 1; margin-top: 0; gap: 5px; justify-content: center; }
+            .upcoming-item { background: #f8f9fa; padding: 6px 8px; flex-direction: row; align-items: flex-start; justify-content: space-between; }
+            .calendar-grid, .day-header { display: none !important; }
+            .mobile-list-view { display: block; }
+            .action-buttons button { flex: 1 1 40%; justify-content: center; }
+        }
+        
+        @media print {
+            .no-print, .footer, .calendar-header button, .calendar-grid, .day-header { display: none !important; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; }
+            .mobile-list-view { display: block !important; border: 1px solid #ccc !important; margin-top: 0; }
+            .mobile-list-row { break-inside: avoid; page-break-inside: avoid; border-bottom: 1px solid #ccc !important; }
+            .col-eng-date, .col-mm-date, .mobile-donor-item { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .mobile-donor-item.morning { background-color: #fffbf2 !important; border-left-color: #d4a15b !important; }
+            .mobile-donor-item.day { background-color: #f0fff4 !important; border-left-color: #4caf50 !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay"><div class="spinner"></div><p style="font-size: 12px; color: #666;">ခေတ္တစောင့်ပါ...</p></div>
+    <div id="toast-container"></div>
+
+    <div class="container">
+        <header>
+            <h1>
+                <picture><source srcset="logo.webp" type="image/webp"><img src="logo.jpg" alt="Logo" class="logo-img" onerror="this.style.display='none'"></picture>
+                <span>ပါဠိတက္ကသိုလ်ညောင်တုန်းကျောင်းတိုက်<br>ဆွမ်းအလှူရှင်စာရင်း</span>
+                <picture><source srcset="logo.webp" type="image/webp"><img src="logo.jpg" alt="Logo" class="logo-img" onerror="this.style.display='none'"></picture>
+            </h1>
+            <p>ရန်ကုန်၊ ဗဟန်း၊ ကြားတောရရပ်ကွက်၊ ရေတာရှည်လမ်းဟောင်း။</p>
+            <div class="notice-box">(ဆွမ်းစာရင်းသွင်းပြီးပါက ဆွမ်းစာရင်းတာဝန်ခံ သို့ အသိပေးပါရန်။ ဖုန်း - ၀၉ ၅၀၈၆၆၂၂)</div>
+        </header>
+
+        <main>
+            <div class="summary-counts no-print">
+                <div id="total-donors-all">ယခုနှစ် (2025) အလှူရှင် စုစုပေါင်း - (0)</div>
+                <div id="new-donors-today">ယနေ့စာရင်းသွင်းသည့် အလှူရှင်များ - (0)</div>
+            </div>
+
+            <section class="upcoming-section no-print" id="upcoming-container">
+                <div style="width:100%; text-align:center; padding:20px; color:#666;">Loading...</div>
+            </section>
+            
+            <section class="donors-section no-print">
+                <h2>ယခုလ အလှူရှင် အကျဉ်းချုပ်</h2>
+                <div class="donor-cards">
+                    <div id="morning-donor-card" class="donor-card">
+                        <div class="icon coffee"><i class="fa-solid fa-mug-saucer"></i></div>
+                        <div class="donor-card-info"><h3>အရုဏ်ဆွမ်း</h3><p id="morning-donations-count">၀ ဦး</p></div>
+                    </div>
+                    <div id="day-donor-card" class="donor-card">
+                        <div class="icon utensils"><i class="fa-solid fa-utensils"></i></div>
+                        <div class="donor-card-info"><h3>နေ့ဆွမ်း</h3><p id="day-donations-count">၀ ဦး</p></div>
+                    </div>
+                </div>
+                <p class="no-donations">ယခုလအတွက် အလှူရှင် မရှိသေးပါ။</p>
+            </section>
+
+            <section class="calendar-container">
+                <div class="calendar-header">
+                    <button id="prev-month-btn" class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="month-label-container">
+                        <h2 id="month-year-header"></h2>
+                        <input type="month" id="month-picker" class="no-print" style="display:none; font-size: 16px; padding: 5px;">
+                    </div>
+                    <button id="next-month-btn" class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button id="today-btn" class="today-btn no-print">ယနေ့</button>
+                </div>
+                
+                <div class="calendar-grid" id="calendar-grid"></div>
+                <div class="mobile-list-view" id="mobile-list-view"></div>
+            </section>
+        </main>
+
+        <footer class="footer no-print">
+            <div id="user-status"></div>
+            <div id="auth-controls" style="width: 100%; display: flex; justify-content: center; margin-bottom: 10px;">
+                <button id="admin-login-btn" class="admin-btn"><i class="fa-solid fa-right-to-bracket"></i> Admin Login</button>
+                <button id="logout-btn" class="admin-btn admin-only" style="background-color: var(--danger-color);"><i class="fa-solid fa-right-from-bracket"></i> ထွက်မည်</button>
+            </div>
+            <div id="admin-action-buttons" class="action-buttons admin-only">
+                <button id="refresh-btn" class="action-btn secondary"><i class="fa-solid fa-sync"></i> Refresh</button>
+                <button id="search-donor-btn" class="action-btn secondary"><i class="fa-solid fa-search"></i> ရှာရန်</button>
+                <button onclick="window.print()" class="action-btn secondary"><i class="fa-solid fa-print"></i> Print</button>
+                <button id="export-btn" class="action-btn secondary"><i class="fa-solid fa-download"></i> Export</button>
+                <button id="import-btn" class="action-btn secondary"><i class="fa-solid fa-upload"></i> Import</button>
+                <button id="clear-data-btn" class="action-btn" style="background-color: var(--danger-color);"><i class="fa-solid fa-trash-can"></i> ရှင်းရန်</button>
+                <input type="file" id="import-file-input" accept=".json">
+            </div>
+        </footer>
+    </div>
+
+    <div id="login-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3>Admin Login</h3>
+            <form id="login-form">
+                <div class="form-group"><label>Email (Optional)</label><input type="email" id="email" placeholder="name@email.com"></div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" required placeholder="******" style="width: 100%; padding-right: 40px;">
+                        <i id="toggle-password" class="fa-solid fa-eye" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666;"></i>
+                    </div>
+                </div>
+                <div class="modal-actions"><button type="button" class="cancel-btn">ပိတ်မည်</button><button type="submit" style="background: var(--primary-color); color: white;">Login</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-choice-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3>အလှူရှင် ထည့်ရန်</h3>
+            <div class="modal-actions" style="flex-direction: column; gap: 10px;">
+                <button id="add-morning-btn" style="background: var(--morning-color); color: white; padding: 12px;"><i class="fa-solid fa-mug-saucer"></i> အရုဏ်ဆွမ်း အလှူရှင်</button>
+                <button id="add-day-btn" style="background: var(--day-color); color: white; padding: 12px;"><i class="fa-solid fa-utensils"></i> နေ့ဆွမ်း အလှူရှင်</button>
+                <button class="cancel-btn">ပိတ်မည်</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="donor-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 id="modal-title">အလှူရှင် အချက်အလက်</h3>
+            <form id="donor-form">
+                <input type="hidden" id="donor-date-key"><input type="hidden" id="donation-type-hidden"><input type="hidden" id="donor-id-hidden">
+                <div class="form-group"><label>အလှူရှင်အမည် <span style="color:red">*</span></label><input type="text" id="donor-name" required placeholder="အမည်"></div>
+                <div class="form-group"><label>တာဝန်ခံ <span style="color:red">*</span></label><input type="text" id="donor-responsible" required placeholder="ဦးပဉ္ဇင်း..."></div>
+                <div class="form-group"><label>ဧည့်သည် ဦးရေ (ခန့်မှန်း)</label><input type="number" id="donor-guests" placeholder="စားပွဲဝိုင်းတွက်ရန် (ဥပမာ - 50)" min="0"></div>
+                <div class="form-group"><label>လိပ်စာ</label><input type="text" id="donor-address" placeholder="နေရပ်လိပ်စာ"></div>
+                <div class="form-group"><label>ဖုန်းနံပါတ်</label><input type="tel" id="donor-phone" placeholder="09..."></div>
+                <div class="modal-actions">
+                    <button type="button" id="delete-donor-btn"><i class="fa-solid fa-trash"></i> ဖျက်မည်</button>
+                    <button type="button" class="cancel-btn">ပိတ်မည်</button>
+                    <button type="submit" id="save-donor-btn"><i class="fa-solid fa-save"></i> သိမ်းမည်</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="donor-list-modal" class="modal-backdrop"><div class="modal-content"><h3 id="donor-list-title">အလှူရှင်များ စာရင်း</h3><div id="donor-list-content"></div><div class="modal-actions"><button class="cancel-btn">ပိတ်မည်</button></div></div></div>
+
+    <div id="search-results-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3>အလှူရှင် ရှာဖွေရန်</h3>
+            <form id="search-form" style="display: flex; gap: 8px;"><input type="search" id="search-input" placeholder="အမည် (သို့) တာဝန်ခံ..." style="flex-grow: 1;"><button type="submit" class="action-btn"><i class="fa-solid fa-search"></i></button></form>
+            <div id="search-results-content"></div><div class="modal-actions"><button class="cancel-btn">ပိတ်မည်</button></div>
+        </div>
+    </div>
+    
+    <script>
+    // --- MYANMAR CALENDAR ALGORITHM ---
+    var SY=1577917828/4320000, LM=1577917828/53433336, MO=1954168.050623, WO=-0.5, TA=(SY/12-LM)*(12-8), TW=LM-(SY/12-LM)*8;
+    function getExcessAndWatat(my){var ed=(SY*(my+3739))%LM; if(ed<TA)ed+=LM; var watat=(ed>=TW)?1:0; return {ed:ed, watat:watat};}
+    function secondWasoJDN(my,ed){return Math.round(SY*my+MO-ed+4.5*LM+WO);}
+    function findPrevWatat(my){var yd=0; while(true){var y=my-yd, info=getExcessAndWatat(y); if(info.watat){return {year:y, fm:secondWasoJDN(y,info.ed), yd:yd};} yd++; if(yd>19)break;} return null;}
+    function yearType(my){var cur=getExcessAndWatat(my), prevInfo=findPrevWatat(my); if(prevInfo===null)return{type:0,tg1:null,fm:null,yd:0}; var type_,fm,diff,rem; if(cur.watat){diff=secondWasoJDN(my,cur.ed)-prevInfo.fm; rem=diff%354; type_=(rem==30)?1:((rem==31)?2:0); fm=secondWasoJDN(my,cur.ed);}else{type_=0; diff=354*prevInfo.yd; rem=0; fm=null;} var tg1=prevInfo.fm+354*prevInfo.yd-102; return {type:type_,tg1:tg1,fm:fm,yd:prevInfo.yd};}
+    function gregorianToJDN(y,m,d){var a=Math.floor((14-m)/12), yy=y+4800-a, mm=m+12*a-3; return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045-0.5;}
+    function jdnToMyanmar(jdn){var my=Math.floor((jdn-0.5-MO)/SY), yr=yearType(my); if(yr.tg1===undefined||yr.tg1===null)return null; var dd=Math.floor(jdn+0.5)-yr.tg1+1, myl=354+(yr.type==1?30:0)+(yr.type==2?1:0), mmt=Math.floor((dd-1)/myl); if(mmt)dd-=myl; var b=Math.floor(yr.type/2), c=Math.floor(1/(yr.type+1)), a=Math.floor((dd+423)/512), mm=Math.floor((dd-b*a+c*a*30+29.26)/29.544), e=Math.floor((mm+12)/16), f=Math.floor((mm+11)/16), md=dd-Math.floor(29.544*mm-29.26)-b*e+c*f*30; mm+=f*3-e*4; var mml=30-mm%2; if(mm==3)mml+=b; var mp=Math.floor((md+1)/16)+Math.floor(md/16)+Math.floor(md/mml), fd=md-15*Math.floor(md/16), wd=(Math.floor(jdn+0.5)+2)%7; return {my:my, mm:mm, md:md, mp:mp, mmt:mmt, myl:myl, fd:fd, wd:wd};}
+    const ceMmDateTime={j2m:function(jd){return jdnToMyanmar(jd);}, gregorianToJd:function(y,m,d){return gregorianToJDN(y,m,d);}};
+
+    // --- MAIN APP LOGIC ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const App = {
+            viewDate: new Date(),
+            donations: {},
+            token: localStorage.getItem('adminToken') || null,
+            currentDateKey: '',
+            elements: {
+                loadingOverlay: document.getElementById('loading-overlay'),
+                adminLoginBtn: document.getElementById('admin-login-btn'), logoutBtn: document.getElementById('logout-btn'),
+                adminActionButtons: document.getElementById('admin-action-buttons'), calendarGrid: document.getElementById('calendar-grid'),
+                mobileListView: document.getElementById('mobile-list-view'), monthYearHeader: document.getElementById('month-year-header'),
+                monthPicker: document.getElementById('month-picker'), prevMonthBtn: document.getElementById('prev-month-btn'),
+                nextMonthBtn: document.getElementById('next-month-btn'), todayBtn: document.getElementById('today-btn'),
+                userStatus: document.getElementById('user-status'), searchDonorBtn: document.getElementById('search-donor-btn'),
+                refreshBtn: document.getElementById('refresh-btn'), clearDataBtn: document.getElementById('clear-data-btn'),
+                exportBtn: document.getElementById('export-btn'), importBtn: document.getElementById('import-btn'),
+                importFileInput: document.getElementById('import-file-input'), newDonorsToday: document.getElementById('new-donors-today'),
+                totalDonorsAll: document.getElementById('total-donors-all'), modals: document.querySelectorAll('.modal-backdrop'),
+                loginModal: document.getElementById('login-modal'), loginForm: document.getElementById('login-form'),
+                addChoiceModal: document.getElementById('add-choice-modal'), donorModal: document.getElementById('donor-modal'),
+                donorForm: document.getElementById('donor-form'), deleteDonorBtn: document.getElementById('delete-donor-btn'),
+                toastContainer: document.getElementById('toast-container')
+            },
+
+            init() { 
+                this.addEventListeners(); 
+                this.updateUIForLoginState();
+                this.loadDonations();
+            },
+
+            showToast(message, type = 'info') { 
+                const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.textContent = message;
+                this.elements.toastContainer.appendChild(toast); void toast.offsetWidth; toast.classList.add('show');
+                setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000); 
+            },
+
+            setLoading(isLoading) { this.elements.loadingOverlay.style.display = isLoading ? 'flex' : 'none'; },
+            ensureArray(data) { if (!data) return []; return Array.isArray(data) ? data : [data]; },
+
+            async loadDonations() {
+                this.setLoading(true);
+                try {
+                    const response = await fetch('/api/donations');
+                    if (!response.ok) throw new Error('Failed to load');
+                    this.donations = await response.json();
+                    this.renderCalendar();
+                    this.renderUpcomingDays();
+                } catch (error) { console.error(error); this.showToast("Data ဆွဲယူမရရှိပါ", "error"); } finally { this.setLoading(false); }
+            },
+
+            async apiRequest(url, method, body = null) {
+                const headers = { 'Content-Type': 'application/json' };
+                if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+                const options = { method, headers };
+                if (body) options.body = JSON.stringify(body);
+                const response = await fetch(url, options);
+                if (response.status === 401 || response.status === 403) { this.handleLogout(); throw new Error("Unauthorized"); }
+                return response;
+            },
+
+            handleLogout() {
+                this.token = null; localStorage.removeItem('adminToken');
+                this.updateUIForLoginState(); this.renderCalendar();
+            },
+
+            addEventListeners() {
+                const els = this.elements;
+                els.prevMonthBtn.addEventListener('click', () => this.changeMonth(-1));
+                els.nextMonthBtn.addEventListener('click', () => this.changeMonth(1));
+                els.todayBtn.addEventListener('click', () => { this.viewDate = new Date(); this.renderCalendar(); });
+                els.monthYearHeader.addEventListener('click', () => { els.monthYearHeader.style.display='none'; els.monthPicker.style.display='block'; els.monthPicker.focus(); const y=this.viewDate.getFullYear(), m=String(this.viewDate.getMonth()+1).padStart(2,'0'); els.monthPicker.value=`${y}-${m}`; });
+                els.monthPicker.addEventListener('change', (e) => { if(e.target.value){const [y,m]=e.target.value.split('-'); this.viewDate=new Date(parseInt(y),parseInt(m)-1,1); this.renderCalendar();} els.monthPicker.style.display='none'; els.monthYearHeader.style.display='block'; });
+                els.monthPicker.addEventListener('blur', () => { els.monthPicker.style.display='none'; els.monthYearHeader.style.display='block'; });
+                els.adminLoginBtn.addEventListener('click', () => this.openModal('login-modal'));
+                els.logoutBtn.addEventListener('click', () => { this.handleLogout(); this.showToast("Logout အောင်မြင်သည်", "success"); });
+                els.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+                document.getElementById('toggle-password').addEventListener('click', function() { const p = document.getElementById('password'); p.setAttribute('type', p.getAttribute('type')==='password'?'text':'password'); this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash'); });
+                els.calendarGrid.addEventListener('click', (e) => this.handleCellClick(e));
+                els.modals.forEach(m => m.addEventListener('click', (e) => { if (e.target.classList.contains('modal-backdrop') || e.target.classList.contains('cancel-btn')) this.closeAllModals(); }));
+                document.getElementById('add-morning-btn').addEventListener('click', () => this.openDonorModal('morning'));
+                document.getElementById('add-day-btn').addEventListener('click', () => this.openDonorModal('day'));
+                els.donorForm.addEventListener('submit', (e) => this.handleSaveDonor(e));
+                els.deleteDonorBtn.addEventListener('click', () => this.handleDeleteDonor());
+                document.getElementById('morning-donor-card').addEventListener('click', () => this.showDonorListModal('morning'));
+                document.getElementById('day-donor-card').addEventListener('click', () => this.showDonorListModal('day'));
+                els.searchDonorBtn.addEventListener('click', () => this.openModal('search-results-modal'));
+                document.getElementById('search-form').addEventListener('submit', (e) => this.handleSearch(e));
+                els.refreshBtn.addEventListener('click', () => this.loadDonations());
+                els.clearDataBtn.addEventListener('click', () => this.clearAllData());
+                els.exportBtn.addEventListener('click', () => this.exportData());
+                els.importBtn.addEventListener('click', () => els.importFileInput.click());
+                els.importFileInput.addEventListener('change', (e) => this.importData(e));
+                els.newDonorsToday.addEventListener('click', () => this.showTodaysDonorListModal());
+            },
+
+            // --- RENDER UPCOMING (WITH RESPONSIBLE PERSON) ---
+            renderUpcomingDays() {
+                const container = document.getElementById('upcoming-container'); if(!container) return;
+                const today = new Date(); const labels = ['ယနေ့', 'နက်ဖြန်', 'သဘက်ခါ']; let html = '';
+                
+                for (let i = 0; i < 3; i++) {
+                    const target = new Date(today); target.setDate(today.getDate() + i);
+                    const k = `${target.getFullYear()}-${target.getMonth()}-${target.getDate()}`;
+                    const d = this.donations[k] || {};
+                    
+                    const mList = this.ensureArray(d.morning);
+                    const dList = this.ensureArray(d.day);
+
+                    const renderList = (list) => {
+                        if(list.length === 0) return '<span class="no-data">မရှိ</span>';
+                        return list.map(item => `
+                            <div class="upcoming-donor-block">
+                                <span class="upcoming-name">${item.name} ${item.guests ? `<span style="font-size:10px;color:#666;">(${item.guests} ဦး)</span>` : ''}</span>
+                                ${item.responsible ? `<span class="upcoming-resp"><i class="fa-solid fa-user-tag"></i> ${item.responsible}</span>` : ''}
+                            </div>`).join('');
+                    };
+
+                    html += `
+                    <div class="upcoming-card">
+                        <h3>${labels[i]} <small style="font-size:11px;color:#888;">${target.getDate()}/${target.getMonth()+1}</small></h3>
+                        <div class="upcoming-row">
+                            <div class="upcoming-item">
+                                <span class="upcoming-label badge-morning"><i class="fa-solid fa-mug-saucer"></i> <span>အရုဏ်</span></span>
+                                <div class="upcoming-name-list">${renderList(mList)}</div>
+                            </div>
+                            <div class="upcoming-item">
+                                <span class="upcoming-label badge-day"><i class="fa-solid fa-utensils"></i> <span>နေ့</span></span>
+                                <div class="upcoming-name-list">${renderList(dList)}</div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                container.innerHTML = html;
+            },
+
+            renderCalendar() {
+                const els = this.elements; els.calendarGrid.innerHTML = ''; els.mobileListView.innerHTML = ''; 
+                const year = this.viewDate.getFullYear(), month = this.viewDate.getMonth(), daysInMonth = new Date(year, month + 1, 0).getDate();
+                const startMm = ceMmDateTime.j2m(ceMmDateTime.gregorianToJd(year, month + 1, 1)), endMm = ceMmDateTime.j2m(ceMmDateTime.gregorianToJd(year, month + 1, daysInMonth));
+                const mmMonths = ["", "တန်ခူး", "ကဆုန်", "နယုန်", "ဝါဆို", "ဝါခေါင်", "တော်သလင်း", "သီတင်းကျွတ်", "တန်ဆောင်မုန်း", "နတ်တော်", "ပြာသို", "တပို့တွဲ", "တပေါင်း"];
+                const mmString = startMm.mm === endMm.mm ? `${mmMonths[startMm.mm]} ${this.toBurmeseNum(startMm.my)}` : `${mmMonths[startMm.mm]} - ${mmMonths[endMm.mm]} ${this.toBurmeseNum(startMm.my)}`;
+                els.monthYearHeader.innerHTML = `${this.viewDate.toLocaleString('en-US', { month: 'long' })} ${year}<br><span class="mm-month-header">(${mmString})</span>`;
+                
+                const dayHeaders = window.innerWidth <= 600 ? [] : ['တနင်္လာ', 'အင်္ဂါ', 'ဗုဒ္ဓဟူး', 'ကြာသပတေး', 'သောကြာ', 'စနေ', 'တနင်္ဂနွေ'];
+                dayHeaders.forEach(day => { const c = document.createElement("div"); c.className = "calendar-cell day-header"; c.textContent = day; els.calendarGrid.appendChild(c); });
+                
+                const firstDay = new Date(year, month, 1).getDay(); let padding = (firstDay === 0) ? 6 : firstDay - 1;
+                for(let i=0; i<padding; i++) els.calendarGrid.appendChild(Object.assign(document.createElement("div"), {className: "calendar-cell other-month"}));
+                
+                const today = new Date();
+                for(let day=1; day<=daysInMonth; day++){
+                    const currentJsDate = new Date(year, month, day); const dateKey = `${year}-${month}-${day}`;
+                    const isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+                    const mmData = this.getMyanmarDateText(currentJsDate);
+                    
+                    // --- PC GRID ---
+                    const cell = document.createElement("div"); cell.className = "calendar-cell"; cell.dataset.dateKey = dateKey;
+                    if(this.token) cell.classList.add('admin-active'); if(isToday) cell.classList.add("today");
+                    const dayNum = document.createElement("div"); dayNum.className = "day-number"; dayNum.textContent = day;
+                    const mmDiv = document.createElement("div"); mmDiv.className = mmData.className; mmDiv.textContent = mmData.text;
+                    
+                    if (mmData.className.includes('full-moon') || mmData.className.includes('new-moon')) { cell.appendChild(dayNum); cell.appendChild(mmDiv); } 
+                    else { const row = document.createElement("div"); row.className = "date-row"; row.appendChild(mmDiv); row.appendChild(dayNum); cell.appendChild(row); }
+                    
+                    const donorCont = document.createElement("div"); donorCont.className = "donations-container";
+                    if(this.donations[dateKey]){
+                        const mList = this.ensureArray(this.donations[dateKey].morning);
+                        const dList = this.ensureArray(this.donations[dateKey].day);
+                        mList.forEach(d => this.renderDonationInCell(donorCont, d, dateKey, "morning"));
+                        dList.forEach(d => this.renderDonationInCell(donorCont, d, dateKey, "day"));
+                    }
+                    cell.appendChild(donorCont); els.calendarGrid.appendChild(cell);
+
+                    // --- MOBILE LIST ---
+                    const listRow = document.createElement("div"); listRow.className = "mobile-list-row"; if(isToday) listRow.classList.add("today-row"); listRow.dataset.dateKey = dateKey;
+                    if(this.token) { 
+                        listRow.classList.add('admin-active'); 
+                        listRow.onclick = (e) => { 
+                            if (this.token && !e.target.closest('.mobile-donor-item')) { 
+                                this.currentDateKey = dateKey; 
+                                document.getElementById('add-morning-btn').style.opacity = '1';
+                                document.getElementById('add-day-btn').style.opacity = '1';
+                                this.openModal('add-choice-modal'); 
+                            } 
+                        }; 
+                    }
+                    const colEng = document.createElement("div"); colEng.className = "col-eng-date";
+                    const dayName = new Date(year, month, day).toLocaleString('en-US', { weekday: 'short' });
+                    colEng.innerHTML = `<span class="date-val">${day}</span><span class="day-val">${dayName}</span>`;
+                    const colMm = document.createElement("div"); colMm.className = "col-mm-date"; colMm.innerHTML = mmData.className.includes('sabbath') ? `<span style="color:var(--primary-color); font-weight:bold;">${mmData.text}</span>` : mmData.text;
+                    const colDonor = document.createElement("div"); colDonor.className = "col-donors";
+                    
+                    if(this.donations[dateKey]) {
+                        const mList = this.ensureArray(this.donations[dateKey].morning);
+                        const dList = this.ensureArray(this.donations[dateKey].day);
+                        
+                        mList.forEach(d => {
+                            const dItem = document.createElement("div"); dItem.className = "mobile-donor-item morning";
+                            dItem.innerHTML = `<i class="fa-solid fa-mug-saucer"></i> <span style="font-weight:bold; font-size:11px;">အရုဏ်</span> - <strong>${d.name}</strong>` + (d.responsible ? `<br><span style="color:#555;font-size:11px;font-style:italic;"><i class="fa-solid fa-user-tag"></i> တာဝန်ခံ: ${d.responsible}</span>` : '');
+                            dItem.onclick = (e) => { e.stopPropagation(); if(this.token) this.openDonorModal('morning', dateKey, d); };
+                            colDonor.appendChild(dItem);
+                        });
+                        dList.forEach(d => {
+                            const dItem = document.createElement("div"); dItem.className = "mobile-donor-item day";
+                            dItem.innerHTML = `<i class="fa-solid fa-utensils"></i> <span style="font-weight:bold; font-size:11px;">နေ့</span> - <strong>${d.name}</strong>` + (d.responsible ? `<br><span style="color:#555;font-size:11px;font-style:italic;"><i class="fa-solid fa-user-tag"></i> တာဝန်ခံ: ${d.responsible}</span>` : '');
+                            dItem.onclick = (e) => { e.stopPropagation(); if(this.token) this.openDonorModal('day', dateKey, d); };
+                            colDonor.appendChild(dItem);
+                        });
+                        if (mList.length === 0 && dList.length === 0) colDonor.innerHTML = `<div class="mobile-donor-empty">-</div>`;
+                    } else { colDonor.innerHTML = `<div class="mobile-donor-empty">-</div>`; }
+                    listRow.append(colEng, colMm, colDonor); els.mobileListView.appendChild(listRow);
+                }
+                setTimeout(() => { const todayEl = document.querySelector('.mobile-list-row.today-row'); if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 500);
+                this.updateDonationSummary();
+            },
+
+            renderDonationInCell(container, data, dateKey, type) {
+                const entry = document.createElement('div'); entry.className = `donor-entry donor-${type}`;
+                let html = `<strong>${data.name}</strong>`;
+                if (data.guests) html += ` <span style="font-size:10px; opacity:0.9;">(${data.guests})</span>`;
+                // Add Responsible Person in Grid View
+                if (data.responsible) html += `<br><span style="font-size:9px; opacity:0.9;"><i class="fa-solid fa-user-tag" style="font-size:8px;"></i> ${data.responsible}</span>`;
+                entry.innerHTML = html;
+                entry.addEventListener('click', (e) => { e.stopPropagation(); if (this.token) this.openDonorModal(type, dateKey, data); });
+                container.appendChild(entry);
+            },
+
+            changeMonth(offset) { this.viewDate.setMonth(this.viewDate.getMonth() + offset); this.renderCalendar(); },
+
+            updateDonationSummary() {
+                let m=0, d=0, t=0, yC={}; const now=new Date(), s=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime(), e=s+86400000;
+                for(const k in this.donations){
+                    const [Y,M]=k.split('-').map(Number);
+                    const mList = this.ensureArray(this.donations[k].morning);
+                    const dList = this.ensureArray(this.donations[k].day);
+                    const count = mList.length + dList.length;
+                    if(count > 0) yC[Y]=(yC[Y]||0)+count;
+                    [...mList, ...dList].forEach(item => { if(item.createdAt) { const ts = new Date(item.createdAt).getTime(); if (ts >= s && ts < e) t++; } });
+                    if(Y===this.viewDate.getFullYear() && M===this.viewDate.getMonth()){ m+=mList.length; d+=dList.length; }
+                }
+                const yrs = Object.keys(yC).sort().map(y=>`<span>${y}-(${yC[y]})</span>`).join(' ');
+                document.getElementById('morning-donations-count').textContent = `${m} ဦး`; document.getElementById('day-donations-count').textContent = `${d} ဦး`;
+                this.elements.totalDonorsAll.innerHTML = `<div>အလှူရှင် စုစုပေါင်း</div><div style="font-size:12px;color:#555;">${yrs||'(၀)'}</div>`;
+                this.elements.newDonorsToday.textContent = `ယနေ့စာရင်းသွင်း: (${t})`;
+                document.querySelector('.no-donations').style.display = (m+d)>0?'none':'block';
+            },
+
+            handleCellClick(e) { 
+                if (!this.token) return; 
+                const c = e.target.closest('.calendar-cell.admin-active'); 
+                if (c && !e.target.closest('.donor-entry')) { 
+                    this.currentDateKey = c.dataset.dateKey; 
+                    document.getElementById('add-morning-btn').style.opacity = '1';
+                    document.getElementById('add-day-btn').style.opacity = '1';
+                    this.openModal('add-choice-modal'); 
+                } 
+            },
+
+            openDonorModal(type, dateKey = this.currentDateKey, data = {}) { 
+                this.closeAllModals(); 
+                const f = this.elements.donorForm; 
+                const isEdit = !!data.name;
+                document.getElementById('modal-title').textContent = `${isEdit?'ပြင်ဆင်':'အသစ်'} - ${type==='morning'?'အရုဏ်':'နေ့'}`; 
+                f.reset(); 
+                f['donor-date-key'].value = dateKey; 
+                f['donation-type-hidden'].value = type; 
+                f['donor-id-hidden'].value = data.id || ''; 
+                f['donor-name'].value = data.name||''; 
+                f['donor-responsible'].value = data.responsible||''; 
+                f['donor-guests'].value = data.guests||''; 
+                f['donor-address'].value = data.address||''; 
+                f['donor-phone'].value = data.phone||''; 
+                this.elements.deleteDonorBtn.style.display = isEdit?'inline-block':'none'; 
+                this.openModal('donor-modal'); 
+            },
+
+            async handleSaveDonor(e) { 
+                e.preventDefault(); 
+                const f=this.elements.donorForm, k=f['donor-date-key'].value, t=f['donation-type-hidden'].value, id=f['donor-id-hidden'].value;
+                const newDonor = { 
+                    id: id || Date.now().toString(), 
+                    name: f['donor-name'].value.trim(), 
+                    responsible: f['donor-responsible'].value.trim(), 
+                    guests: f['donor-guests'].value.trim()||null, 
+                    address: f['donor-address'].value.trim(), 
+                    phone: f['donor-phone'].value.trim(), 
+                    createdAt: id ? (this.donations[k] && this.donations[k][t] ? this.ensureArray(this.donations[k][t]).find(d=>d.id===id)?.createdAt : new Date().toISOString()) : new Date().toISOString()
+                }; 
+                let currentList = [];
+                if (this.donations[k] && this.donations[k][t]) { currentList = this.ensureArray(this.donations[k][t]); }
+                if (id) { const idx = currentList.findIndex(d => d.id === id); if (idx !== -1) currentList[idx] = newDonor; else currentList.push(newDonor); } 
+                else { currentList.push(newDonor); }
+                this.setLoading(true); 
+                try {
+                    const res = await this.apiRequest('/api/donations', 'POST', { dateKey: k, type: t, data: currentList });
+                    if(res.ok) { await this.loadDonations(); this.closeAllModals(); this.showToast("သိမ်းပြီး","success"); } else { throw new Error(); }
+                } catch(err) { this.setLoading(false); this.showToast("မသိမ်းနိုင်ပါ", "error"); }
+            },
+
+            async handleDeleteDonor() { 
+                if(!confirm("ဖျက်မည်?"))return; 
+                const k=this.elements.donorForm['donor-date-key'].value, t=this.elements.donorForm['donation-type-hidden'].value, id=this.elements.donorForm['donor-id-hidden'].value;
+                this.setLoading(true); 
+                try {
+                    const res = await this.apiRequest('/api/donations', 'DELETE', { dateKey: k, type: t, donorId: id });
+                    if(res.ok) { await this.loadDonations(); this.closeAllModals(); this.showToast("ဖျက်ပြီး","success"); } else { throw new Error(); }
+                } catch(err) { this.setLoading(false); this.showToast("မဖျက်နိုင်ပါ", "error"); }
+            },
+
+            // --- IMPROVED MODAL LIST VIEW ---
+            showDonorListModal(type) { 
+                const title = `${type === 'morning' ? 'အရုဏ်ဆွမ်း' : 'နေ့ဆွမ်း'} အလှူရှင်များ (${this.viewDate.toLocaleString('my-MM', { month: 'long' })})`;
+                document.getElementById('donor-list-title').textContent = title;
+                const donorList = []; const currentMonth = this.viewDate.getMonth(); const currentYear = this.viewDate.getFullYear();
+                for (const key in this.donations) {
+                    const [year, month, day] = key.split('-').map(Number);
+                    if (year === currentYear && month === currentMonth && this.donations[key][type]) {
+                        const list = this.ensureArray(this.donations[key][type]);
+                        list.forEach(d => donorList.push({ date: day, ...d }));
+                    }
+                }
+                donorList.sort((a, b) => a.date - b.date);
+                let listHtml = `<p style="text-align:center;">မရှိပါ။</p>`;
+                if (donorList.length > 0) {
+                    listHtml = `<table class="results-table">
+                        <thead><tr><th>နေ့</th><th>အမည်/တာဝန်ခံ</th><th style="text-align:center;">ဧည့်သည်</th></tr></thead>
+                        <tbody>${donorList.map(d => `
+                            <tr>
+                                <td>${this.toMyanmarNumerals(d.date)}</td>
+                                <td>
+                                    <strong>${d.name}</strong><br>
+                                    ${d.responsible ? `<span style="font-size:11px;color:#555;"><i class="fa-solid fa-user-tag"></i> ${d.responsible}</span>` : ''}
+                                </td>
+                                <td style="text-align:center; font-weight:bold; color:var(--primary-color);">${d.guests ? this.toMyanmarNumerals(d.guests) : '-'}</td>
+                            </tr>`).join('')}
+                        </tbody></table>`;
+                }
+                document.getElementById('donor-list-content').innerHTML = listHtml; this.openModal('donor-list-modal');
+            },
+
+            showTodaysDonorListModal() { 
+                document.getElementById('donor-list-title').textContent = "ယနေ့ စာရင်းသွင်းထားသူများ"; 
+                const arr=[]; const s=new Date(); s.setHours(0,0,0,0); const e=new Date(s); e.setDate(s.getDate()+1);
+                for(const k in this.donations){
+                    ['morning','day'].forEach(typ=>{ 
+                        const list = this.ensureArray(this.donations[k][typ]);
+                        list.forEach(item => {
+                            if (item.createdAt) {
+                                const ts = new Date(item.createdAt).getTime();
+                                if (ts >= s.getTime() && ts < e.getTime()) {
+                                    const [Y,M,D]=k.split('-'); 
+                                    arr.push({date:`${D}/${Number(M)+1}/${Y}`, ...item, type:typ==='morning'?'အရုဏ်':'နေ့'}); 
+                                }
+                            }
+                        });
+                    });
+                } 
+                let h=`<p style="text-align:center;">မရှိပါ။</p>`; 
+                if(arr.length){ 
+                    h=`<table class="results-table">
+                        <thead><tr><th>ရက်</th><th>အမည်/တာဝန်ခံ</th><th>ပုံစံ</th></tr></thead>
+                        <tbody>${arr.map(x=>`
+                            <tr>
+                                <td>${x.date}</td>
+                                <td>
+                                    <strong>${x.name}</strong><br>
+                                    ${x.responsible ? `<span style="font-size:11px;color:#555;"><i class="fa-solid fa-user-tag"></i> ${x.responsible}</span>` : ''}
+                                </td>
+                                <td>${x.type}</td>
+                            </tr>`).join('')}
+                        </tbody></table>`; 
+                } 
+                document.getElementById('donor-list-content').innerHTML = h; this.openModal('donor-list-modal'); 
+            },
+
+            handleSearch(e) { 
+                e.preventDefault(); const q=document.getElementById('search-input').value.toLowerCase().trim(); if(!q)return; 
+                const res=[]; 
+                for(const k in this.donations){ 
+                    const [Y,M,D]=k.split('-'); 
+                    ['morning','day'].forEach(t=>{ 
+                        const list = this.ensureArray(this.donations[k][t]);
+                        list.forEach(d => {
+                            if(d.name.toLowerCase().includes(q)||(d.responsible&&d.responsible.toLowerCase().includes(q))){ 
+                                res.push({date:`${D}/${Number(M)+1}`,type:t==='morning'?'အရုဏ်':'နေ့',...d}); 
+                            } 
+                        });
+                    }); 
+                } 
+                let h=`<p style="text-align:center;">မတွေ့ပါ။</p>`; 
+                if(res.length){ 
+                    h=`<table class="results-table">
+                        <thead><tr><th>ရက်</th><th>အမည်/တာဝန်ခံ</th></tr></thead>
+                        <tbody>${res.map(r=>`
+                            <tr>
+                                <td>${r.date}</td>
+                                <td>
+                                    <strong>${r.name}</strong><br>
+                                    ${r.responsible ? `<span style="font-size:11px;color:#555;"><i class="fa-solid fa-user-tag"></i> ${r.responsible}</span>` : ''}
+                                </td>
+                            </tr>`).join('')}
+                        </tbody></table>`; 
+                } document.getElementById('search-results-content').innerHTML = h; 
+            },
+            
+            async clearAllData() {
+                if (!confirm("Data အားလုံးကို ဖျက်ရန် သေချာပါသလား?")) return;
+                const userInput = prompt("အတည်ပြုရန် 'DELETE' ဟု ရိုက်ထည့်ပါ:");
+                if (userInput !== 'DELETE') return;
+                this.setLoading(true);
+                try {
+                    const res = await this.apiRequest('/api/clear-all', 'POST');
+                    if(res.ok) { this.donations = {}; this.renderCalendar(); this.renderUpcomingDays(); this.showToast("ရှင်းလင်းပြီး", "success"); }
+                } catch(e) { this.showToast("Error", "error"); } finally { this.setLoading(false); }
+            },
+            
+            exportData() {
+                const dataStr = JSON.stringify(this.donations, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob); const a = document.createElement('a');
+                a.href = url; a.download = `donations_backup_${new Date().toISOString().slice(0, 10)}.json`; a.click(); URL.revokeObjectURL(url);
+            },
+            
+            importData(e) {
+                const file = e.target.files[0]; if (!file) return;
+                if (!confirm("Import လုပ်မည် သေချာလား?")) { e.target.value = ''; return; }
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    try {
+                        const jsonData = JSON.parse(event.target.result); this.setLoading(true);
+                        const res = await this.apiRequest('/api/import', 'POST', jsonData);
+                        if (res.ok) { await this.loadDonations(); this.showToast("Import အောင်မြင်", "success"); }
+                    } catch (err) { this.showToast("Failed", "error"); } finally { this.setLoading(false); e.target.value = ''; }
+                }; reader.readAsText(file);
+            },
+            
+            async handleLogin(e) { 
+                e.preventDefault(); this.setLoading(true); 
+                const email = document.getElementById('email').value; const password = document.getElementById('password').value;
+                try {
+                    const response = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email, password }) });
+                    if (response.ok) { const data = await response.json(); this.token = data.token; localStorage.setItem('adminToken', this.token); this.updateUIForLoginState(); this.renderCalendar(); this.closeAllModals(); } else { this.showToast("Password မှားယွင်းနေပါသည်", "error"); }
+                } catch (err) { this.showToast("Connection Error", "error"); } finally { this.setLoading(false); }
+            },
+
+            updateUIForLoginState() { 
+                const isLoggedIn = !!this.token; const els = this.elements;
+                els.adminLoginBtn.style.display = isLoggedIn ? 'none':'inline-flex'; els.logoutBtn.style.display = isLoggedIn ? 'inline-flex':'none'; 
+                els.adminActionButtons.style.display = isLoggedIn ? 'flex':'none'; els.userStatus.textContent = isLoggedIn ? `Admin Mode Active` : ''; 
+            },
+            
+            getMyanmarDateText(jsDate) {
+                try {
+                    const jd = ceMmDateTime.gregorianToJd(jsDate.getFullYear(), jsDate.getMonth() + 1, jsDate.getDate());
+                    const mmDate = ceMmDateTime.j2m(jd);
+                    if (!mmDate) return { text: '', className: '' };
+                    const months = ["", "တန်ခူး", "ကဆုန်", "နယုန်", "ဝါဆို", "ဝါခေါင်", "တော်သလင်း", "သီတင်းကျွတ်", "တန်ဆောင်မုန်း", "နတ်တော်", "ပြာသို", "တပို့တွဲ", "တပေါင်း"];
+                    const monthName = months[mmDate.mm] || "";
+                    let moonPhaseText = '', displayDay = mmDate.md, phaseText = '', className = 'mm-date', adjustedDay = mmDate.md;
+                    if (mmDate.mp === 1) { moonPhaseText = `🌕 ${monthName} လပြည့်`; displayDay = ''; adjustedDay = 15; className += ' full-moon'; }
+                    else if (mmDate.mp === 3) { moonPhaseText = `🌑 ${monthName} လကွယ်`; displayDay = ''; adjustedDay = 15; className += ' new-moon'; }
+                    else if (mmDate.mp === 2) { adjustedDay = mmDate.md - 15; displayDay = adjustedDay; phaseText = ' ဆုတ်'; }
+                    else { phaseText = ' ဆန်း'; }
+                    let dayText = displayDay ? (this.toBurmeseNum(displayDay) + phaseText) : '';
+                    if (jsDate.getDate() === 1 && !moonPhaseText) dayText = `${monthName} ${dayText}`;
+                    if (adjustedDay === 8 || mmDate.mp === 1 || adjustedDay === 8 || mmDate.mp === 3) className += ' sabbath';
+                    return { text: moonPhaseText || dayText, className: className };
+                } catch (e) { return { text: '', className: '' }; }
+            },
+            toMyanmarNumerals(n) { return n; }, // Optional: implement conversion
+            toBurmeseNum(n) { const d = ['၀','၁','၂','၃','၄','၅','၆','၇','၈','၉']; return n.toString().split('').map(x => d[parseInt(x)]||x).join(''); },
+            openModal(id) { document.getElementById(id).classList.add('show'); },
+            closeAllModals() { this.elements.modals.forEach(m=>m.classList.remove('show')); }
+        };
+        App.init();
+    });
+    </script>
+</body>
+</html>
